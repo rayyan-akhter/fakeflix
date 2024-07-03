@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   AiFillInfoCircle,
   AiOutlineDislike,
@@ -19,30 +19,44 @@ import img9 from "../../assets/img9.jpg";
 import { MdAddCircleOutline } from "react-icons/md";
 import "./style.css";
 function Main() {
-  const [onHover,setOnHover]=useState(false);
-  const [currentIndex,setCurrentIndex]=useState(0);
-  const slides = [img1, img2, img3, img4, img5, img6, img7, img8, img9];
+  const [onHover, setOnHover] = useState(false);
+
+  const slides = [
+    {id:0 , src: img1},
+    {id:1 , src: img2},
+    {id:2 , src: img3},
+    {id:3 , src: img4},
+    {id:4 , src: img5},
+    {id:5 , src: img6},
+    {id:6 , src: img7},
+    {id:7 , src: img8},
+    {id:8 , src: img9},
+  ];
+  const [currentId, setCurrentId] = useState(slides[0].id);
+
   const totalSlides = slides.length;
-  
-  useEffect(()=>{
-    const interval = setInterval(()=>{
-      setCurrentIndex((currentIndex + 1) % totalSlides);
-    },3000);
-    return ()=> clearInterval(interval);
-  },[currentIndex]);
 
-  const nextSlide=() =>{
-    setCurrentIndex((currentIndex + 1) % totalSlides);
-  }
+  const nextSlide = () => {
+    setCurrentId((prevId) => {
+      const nextId = prevId + 1;
+      return nextId >= 5 ? prevId : nextId;
+    });
+  };
 
-  const prevSlide =()=>{
-    setCurrentIndex((currentIndex - 1 + totalSlides) % totalSlides);
-  }
+  const prevSlide = () => {
+    setCurrentId((prevId) => {
+      const nextId = prevId - 1;
+      return prevId > 0 ? nextId : prevId;
+    });
+  };
+  console.log(currentId);
+
+  const randomSlide = slides[Math.floor(Math.random() * slides.length)];
   return (
-    
     <main className="landing-page">
       <header>
-        <img src={banner} alt="banner" className="banner" />
+        <div className="vignette"></div>
+        <img src={randomSlide.src} alt="banner" className="banner" />
         <div className="banner-content">
           <h1>Dune: Part Two</h1>
           <p>
@@ -51,7 +65,7 @@ function Main() {
             who destroyed h...
           </p>
           <div className="banner-options">
-            <a href="#" >
+            <a href="#">
               <button className="banner-options-play">
                 <FaCirclePlay size={28} />
                 Play
@@ -66,82 +80,81 @@ function Main() {
       </header>
       <section className="slider">
         <h2 className="slider-title">Fakeflix originals</h2>
-        <div className="slider-wrapper"> 
-          <button className="slider-btn left" onClick={prevSlide} >
-            <FaChevronLeft />
+        <div className="slider-wrapper ">
+          <button className="slider-btn left" onClick={prevSlide}>
+            <FaChevronLeft size={25} />
           </button>
 
           <ul className="slider-content">
-            
-            <li className="slider-item"
-            onMouseEnter={()=> setOnHover(true)}
-            onMouseLeave={()=> setOnHover(false)}
-            >
-              {onHover ? (
-        <div className="hovered-content">
-          <img
-            src="https://image.tmdb.org/t/p/original//hib8MpBPU7GdluS38htXCF4uw0c.jpg"
-            alt=""
-            className="hovered-img"
-          />
-          <div className="img-icon-container">
-            <FaCirclePlay size={25} />
-            <MdAddCircleOutline size={25} />
-            <AiOutlineLike size={25} />
-            <AiOutlineDislike size={25} />
-          </div>
-          <ul className="slider-hovered-type">
-            <li>Crime</li>
-            <li>Drama</li>
-            <li>Romance</li>
-          </ul>
-          <div className="slider-movie-title">
-            <p>Recommended at 79.18 %</p>
-            <p>· 1999 ·</p>
-          </div>
-          <div className="slider-movie-description">
-            <p>
-              In the criminal justice system, sexually-based offenses are
-              considered especially heinous. In New York City, the dedicated
-              detectives who investigate these vicious felonies are members of
-              an elite squad known as the Special Victims Unit. These are their
-              stories.
-            </p>
-          </div>
-        </div>
-      ) : (
-        <img src={img1} alt="" className="img1" />
-      )}
-            </li>
-            <li className="slider-item">
-              <img src={img1} alt="" className="img1" />
-            </li>
-            <li className="slider-item">
-              <img src={img1} alt="" className="img1" />
-            </li>
-            <li className="slider-item">
-              <img src={img1} alt="" className="img1" />
-            </li>
-            <li className="slider-item">
-              <img src={img1} alt="" className="img1" />
-            </li>
-            <li className="slider-item">
-              <img src={img1} alt="" className="img1" />
-            </li>
-            <li className="slider-item">
-              <img src={img1} alt="" className="img1" />
-            </li>
+            {slides.map((slide) => (
+              <div
+              key={slide.id}
+                className={`slider-item1 ${
+                  slide.id === currentId ? "active" : ""
+                }`}
+                style={{
+                  transform: `translateX(-${
+                    (currentId % totalSlides) * 100
+                  }%)  `,
+                }}
+              >
+                <li
+                  key={slide.id}
+                  className="li-wrapper"
+                  onMouseEnter={() => setOnHover(slide.id === currentId)}
+                  onMouseLeave={() => setOnHover(false)}
+                >
+                  {onHover && slide.id === 0 ? (
+                    <div className="hovered-content">
+                      <img
+                        src="https://image.tmdb.org/t/p/original//hib8MpBPU7GdluS38htXCF4uw0c.jpg"
+                        alt=""
+                        className="hovered-img"
+                      />
+                      <div className="img-icon-container">
+                        <FaCirclePlay size={25} />
+                        <MdAddCircleOutline size={25} />
+                        <AiOutlineLike size={25} />
+                        <AiOutlineDislike size={25} />
+                      </div>
+                      <ul className="slider-hovered-type">
+                        <li>Crime</li>
+                        <li>Drama</li>
+                        <li>Romance</li>
+                      </ul>
+                      <div className="slider-movie-title">
+                        <p>Recommended at 79.18 %</p>
+                        <p>· 1999 ·</p>
+                      </div>
+                      <div className="slider-movie-description">
+                        <p>
+                          In the criminal justice system, sexually-based
+                          offenses are considered especially heinous. In New
+                          York City, the dedicated detectives who investigate
+                          these vicious felonies are members of an elite squad
+                          known as the Special Victims Unit. These are their
+                          stories.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <img src={slide.src} alt="" className="img1" />
+                  )}
+                  
+                </li>
+              </div>
+            ))}
           </ul>
           <button className="slider-btn right" onClick={nextSlide}>
-            <FaChevronRight />
+            <FaChevronRight size={25} />
           </button>
         </div>
       </section>
       <section className="slider">
         <h2 className="slider-title">Top rated tv shows</h2>
-        <div className="slider-wrapper" >
-          <button className="slider-btn" >
-            <FaChevronLeft />
+        <div className="slider-wrapper">
+          <button className="slider-btn">
+            <FaChevronLeft size={25} />
           </button>
 
           <ul className="slider-content">
@@ -149,29 +162,29 @@ function Main() {
               <img src={img2} alt="" className="img1" />
             </li>
             <li className="slider-item">
-              <img src={img2} alt="" className="img1" />
+              <img src={img5} alt="" className="img1" />
             </li>
             <li className="slider-item">
-              <img src={img2} alt="" className="img1" />
+              <img src={img4} alt="" className="img1" />
             </li>
             <li className="slider-item">
-              <img src={img2} alt="" className="img1" />
-            </li>
-            <li className="slider-item">
-              <img src={img2} alt="" className="img1" />
-            </li>
-            <li className="slider-item">
-              <img src={img2} alt="" className="img1" />
-            </li>
-            <li className="slider-item">
-              <img src={img2} alt="" className="img1" />
+              <img src={img3} alt="" className="img1" />
             </li>
             <li className="slider-item">
               <img src={img1} alt="" className="img1" />
             </li>
+            <li className="slider-item">
+              <img src={img6} alt="" className="img1" />
+            </li>
+            <li className="slider-item">
+              <img src={img7} alt="" className="img1" />
+            </li>
+            <li className="slider-item">
+              <img src={img8} alt="" className="img1" />
+            </li>
           </ul>
-          <button className="slider-btn right" >
-            <FaChevronRight />
+          <button className="slider-btn right">
+            <FaChevronRight size={25} />
           </button>
         </div>
       </section>
@@ -179,7 +192,7 @@ function Main() {
         <h2 className="slider-title">Top rated movies</h2>
         <div className="slider-wrapper">
           <button className="slider-btn">
-            <FaChevronLeft />
+            <FaChevronLeft size={25} />
           </button>
 
           <ul className="slider-content">
@@ -200,7 +213,7 @@ function Main() {
             </li>
           </ul>
           <button className="slider-btn right">
-            <FaChevronRight />
+            <FaChevronRight size={25} />
           </button>
         </div>
       </section>
@@ -208,7 +221,7 @@ function Main() {
         <h2 className="slider-title">Trending</h2>
         <div className="slider-wrapper">
           <button className="slider-btn">
-            <FaChevronLeft />
+            <FaChevronLeft size={25} />
           </button>
 
           <ul className="slider-content">
@@ -229,7 +242,7 @@ function Main() {
             </li>
           </ul>
           <button className="slider-btn right">
-            <FaChevronRight />
+            <FaChevronRight size={25} />
           </button>
         </div>
       </section>
@@ -237,7 +250,7 @@ function Main() {
         <h2 className="slider-title">Drama</h2>
         <div className="slider-wrapper">
           <button className="slider-btn">
-            <FaChevronLeft />
+            <FaChevronLeft size={25} />
           </button>
 
           <ul className="slider-content">
@@ -258,7 +271,7 @@ function Main() {
             </li>
           </ul>
           <button className="slider-btn right">
-            <FaChevronRight />
+            <FaChevronRight size={25} />
           </button>
         </div>
       </section>
@@ -266,7 +279,7 @@ function Main() {
         <h2 className="slider-title">Animation</h2>
         <div className="slider-wrapper">
           <button className="slider-btn">
-            <FaChevronLeft />
+            <FaChevronLeft size={25} />
           </button>
 
           <ul className="slider-content">
@@ -287,7 +300,7 @@ function Main() {
             </li>
           </ul>
           <button className="slider-btn right">
-            <FaChevronRight />
+            <FaChevronRight size={25} />
           </button>
         </div>
       </section>
@@ -295,7 +308,7 @@ function Main() {
         <h2 className="slider-title">Sci-Fi</h2>
         <div className="slider-wrapper">
           <button className="slider-btn">
-            <FaChevronLeft />
+            <FaChevronLeft size={25} />
           </button>
 
           <ul className="slider-content">
@@ -316,7 +329,7 @@ function Main() {
             </li>
           </ul>
           <button className="slider-btn right">
-            <FaChevronRight />
+            <FaChevronRight size={25} />
           </button>
         </div>
       </section>
@@ -324,7 +337,7 @@ function Main() {
         <h2 className="slider-title">Mystery</h2>
         <div className="slider-wrapper">
           <button className="slider-btn">
-            <FaChevronLeft />
+            <FaChevronLeft size={25} />
           </button>
 
           <ul className="slider-content">
@@ -345,7 +358,7 @@ function Main() {
             </li>
           </ul>
           <button className="slider-btn right">
-            <FaChevronRight />
+            <FaChevronRight size={25} />
           </button>
         </div>
       </section>
@@ -353,7 +366,7 @@ function Main() {
         <h2 className="slider-title">Documentaries</h2>
         <div className="slider-wrapper">
           <button className="slider-btn">
-            <FaChevronLeft size={23} />
+            <FaChevronLeft size={25} />
           </button>
 
           <ul className="slider-content">
@@ -374,7 +387,7 @@ function Main() {
             </li>
           </ul>
           <button className="slider-btn right">
-            <FaChevronRight size={23} />
+            <FaChevronRight size={25} />
           </button>
         </div>
       </section>
